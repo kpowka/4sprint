@@ -81,9 +81,9 @@ const (
 // weight float64 — вес пользователя.
 // duration float64 — длительность тренировки в часах.
 func RunningSpentCalories(action int, weight, duration float64) float64 {
-
-	// ваш код здесь
-	runningCalories := ((runningCaloriesMeanSpeedMultiplier * meanSpeed(action, duration) * runningCaloriesMeanSpeedShift) * weight / mInKm * duration * minInH)
+	runSpeed := meanSpeed(action, duration) // скорость в км/ч
+	timeInMinutes := duration * minInH      // время бега в минутах
+	runningCalories := ((runningCaloriesMeanSpeedMultiplier * runSpeed * runningCaloriesMeanSpeedShift) * weight / mInKm * timeInMinutes)
 	return runningCalories
 }
 
@@ -102,8 +102,10 @@ const (
 // weight float64 — вес пользователя.
 // height float64 — рост пользователя.
 func WalkingSpentCalories(action int, duration, weight, height float64) float64 {
-	// ваш код здесь
-	walkingCalories := ((walkingCaloriesWeightMultiplier*weight + (math.Pow(meanSpeed(action, duration), 2)/height)*walkingSpeedHeightMultiplier*weight) * duration * minInH)
+	walkingSpeed := meanSpeed(action, duration) * kmhInMsec // средняя скорость в м/с
+	heightInMeters := height / 100                          // рост в метрах
+	timeInMinutes := duration * minInH                      // время бега в минутах
+	walkingCalories := ((walkingCaloriesWeightMultiplier*weight + math.Pow(walkingSpeed, 2)/heightInMeters*walkingSpeedHeightMultiplier*weight) * timeInMinutes)
 	return walkingCalories
 }
 
@@ -136,7 +138,7 @@ func swimmingMeanSpeed(lengthPool, countPool int, duration float64) float64 {
 // duration float64 — длительность тренировки в часах.
 // weight float64 — вес пользователя.
 func SwimmingSpentCalories(lengthPool, countPool int, duration, weight float64) float64 {
-	// ваш код здесь
-	swimmingCalories := (swimmingMeanSpeed(lengthPool, countPool, duration) + swimmingCaloriesMeanSpeedShift) * 2 * weight * duration
+	swimmingSpeed := swimmingMeanSpeed(lengthPool, countPool, duration)
+	swimmingCalories := (swimmingSpeed + swimmingCaloriesMeanSpeedShift) * 2 * weight * duration
 	return swimmingCalories
 }
